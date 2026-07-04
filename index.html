@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>项目知识图谱生成器</title>
+    <link rel="stylesheet" href="./styles.css?v=20260702-word-numbering" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <section class="brand">
+          <div class="mark">
+            <img src="./assets/zbo-graph-logo.png" alt="ZBO Graph" />
+          </div>
+          <div>
+            <h1>ZBO Graph</h1>
+          </div>
+        </section>
+
+        <section class="panel catalog-panel">
+          <div class="panel-title">
+            <h2>图谱目录</h2>
+          </div>
+          <div id="catalogList" class="catalog-list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">
+            <h2>输入</h2>
+            <button id="loadDemo" class="ghost-button" type="button">预览</button>
+          </div>
+
+          <textarea id="treeInput" spellcheck="false"></textarea>
+
+          <div class="import-row">
+            <button id="openImportDialog" class="ghost-button" type="button">导入</button>
+            <input id="fileInput" class="hidden-file-input" type="file" accept=".txt,.md,.markdown,.tree,.log,.docx,.pdf" />
+            <input id="folderInput" class="hidden-file-input" type="file" webkitdirectory directory multiple />
+          </div>
+
+          <div class="actions">
+            <button id="expandOne" class="icon-button" type="button" title="展开一层">+</button>
+            <button id="collapseOne" class="icon-button" type="button" title="收起一层">-</button>
+            <button id="toggleAll" class="icon-button wide-icon-button" type="button" title="全部展开 / 全部收起" aria-label="全部展开或收起">⛶</button>
+          </div>
+          <div class="export-actions">
+            <button id="openExportDialog" class="ghost-button" type="button">导出</button>
+            <button id="openSaveLocation" class="ghost-button" type="button">打开保存位置</button>
+          </div>
+        </section>
+
+        <section class="panel stats-panel">
+          <div class="panel-title">
+            <h2>统计</h2>
+          </div>
+          <dl>
+            <div>
+              <dt>节点</dt>
+              <dd id="nodeCount">0</dd>
+            </div>
+            <div>
+              <dt>目录</dt>
+              <dd id="dirCount">0</dd>
+            </div>
+            <div>
+              <dt>文件</dt>
+              <dd id="fileCount">0</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="panel color-panel">
+          <div class="panel-title">
+            <h2>文件类型颜色</h2>
+            <button id="resetColors" class="ghost-button" type="button">重置</button>
+          </div>
+          <div id="colorList" class="color-list"></div>
+        </section>
+      </aside>
+
+      <div id="splitter" class="splitter" role="separator" aria-orientation="vertical" aria-label="调整左右区域宽度">
+        <button id="sidebarToggle" class="splitter-toggle" type="button" aria-label="收起左侧栏" title="收起左侧栏">‹</button>
+      </div>
+
+      <section class="workspace">
+        <header class="toolbar">
+          <div>
+            <h2 id="graphTitle">llm_customer_service_B_wiki</h2>
+          </div>
+          <div class="toolbar-actions">
+            <input id="searchInput" type="search" placeholder="搜索节点" />
+            <button id="layoutMode" class="round-tool-button" type="button" aria-label="切换图谱样式" title="切换图谱样式">↓</button>
+            <button id="backGraph" class="round-tool-button" type="button" aria-label="撤销" title="撤销">←</button>
+            <button id="closeGraph" class="round-tool-button" type="button" aria-label="关闭" title="关闭">×</button>
+          </div>
+        </header>
+
+        <div id="graphViewport" class="graph-viewport">
+          <div id="emptyState" class="empty-state">从左侧图谱目录选择一个文件打开</div>
+          <svg id="graph" role="img" aria-label="项目目录知识图谱"></svg>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="noteDialog" class="note-dialog">
+      <form method="dialog">
+        <header>
+          <h2 id="noteTitle">编辑节点</h2>
+          <button id="closeNote" class="icon-button small-icon-button" value="cancel" type="submit">×</button>
+        </header>
+        <div class="note-field">
+          <textarea id="noteInput" rows="5" placeholder="给这个节点添加注释"></textarea>
+          <button id="clearNote" class="ghost-button note-clear-button" value="clear" type="button">清空</button>
+          <button class="primary-button note-save-button" value="save" type="submit">保存注释</button>
+        </div>
+        <label class="toggle-row">
+          <input id="importantToggle" type="checkbox" />
+          <span>重点标记</span>
+        </label>
+        <div class="dialog-actions">
+          <button id="addChildButton" class="ghost-button" value="add-child" type="button">新增子节点</button>
+          <button id="saveNodeButton" class="primary-button" value="save-node" type="submit">保存</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="childDialog" class="note-dialog child-dialog">
+      <form method="dialog">
+        <header>
+          <h2>新增子节点</h2>
+          <button class="icon-button small-icon-button" value="cancel" type="submit">×</button>
+        </header>
+        <input id="childNameInput" class="dialog-input" type="text" placeholder="输入子节点名称" />
+        <div class="dialog-actions">
+          <button class="primary-button" value="save-child" type="submit">添加</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="importDialog" class="note-dialog import-dialog">
+      <form method="dialog">
+        <header>
+          <h2>选择导入方式</h2>
+          <button class="icon-button small-icon-button" value="cancel" type="submit">×</button>
+        </header>
+        <p class="support-text">支持 .txt / .md / .markdown / .docx / .pdf 与文件夹上传</p>
+        <div class="dialog-actions">
+          <button id="chooseFileImport" class="ghost-button" value="file" type="submit">上传数据</button>
+          <button id="chooseFolderImport" class="ghost-button" value="folder" type="submit">选择文件夹</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="exportDialog" class="note-dialog export-dialog">
+      <form method="dialog">
+        <header>
+          <h2>选择导出格式</h2>
+          <button class="icon-button small-icon-button" value="cancel" type="submit">×</button>
+        </header>
+        <div class="dialog-actions">
+          <button id="exportText" class="ghost-button" value="text" type="submit">TXT 文档</button>
+          <button id="exportImage" class="ghost-button" value="image" type="submit">PNG 图片</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="./app.js?v=20260702-word-numbering"></script>
+  </body>
+</html>

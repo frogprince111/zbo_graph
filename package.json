@@ -1,0 +1,38 @@
+{
+  "name": "zbo-graph",
+  "version": "0.1.0",
+  "description": "ZBO Graph desktop knowledge graph tool",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "keywords": [
+    "knowledge-graph",
+    "desktop",
+    "electron"
+  ],
+  "author": "zbo",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.zbo.graph",
+    "productName": "ZBO Graph",
+    "files": [
+      "index.html",
+      "styles.css",
+      "app.js",
+      "main.js",
+      "preload.js",
+      "assets/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity"
+    }
+  }
+}
