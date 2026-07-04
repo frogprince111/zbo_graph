@@ -1,0 +1,114 @@
+ZBO Graph 项目运行说明
+======================
+
+一、项目位置
+
+本机项目目录：
+/Users/zbo/Documents/知识图谱
+
+GitHub 仓库：
+git@github.com:frogprince111/zbo_graph.git
+https://github.com/frogprince111/zbo_graph
+
+
+二、直接打开网页版
+
+如果只是临时使用，可以直接双击项目根目录下的 index.html。
+
+路径：
+/Users/zbo/Documents/知识图谱/index.html
+
+说明：
+网页版可以使用大部分图谱功能，但“打开保存位置”等桌面能力会受浏览器限制。
+
+
+三、启动桌面应用
+
+进入项目目录：
+
+cd /Users/zbo/Documents/知识图谱
+
+安装依赖：
+
+npm install
+
+启动桌面应用：
+
+npm start
+
+如果 Electron 下载较慢，可以使用镜像：
+
+ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ npm install
+
+如果 macOS 提示 Electron 签名或权限异常，可以尝试：
+
+xattr -cr node_modules/electron/dist/Electron.app
+codesign --force --deep --sign - node_modules/electron/dist/Electron.app
+npm start
+
+
+四、生成安装包
+
+进入项目目录：
+
+cd /Users/zbo/Documents/知识图谱
+
+执行打包：
+
+npm run dist
+
+当前已经生成的 macOS 安装包位置：
+
+/Users/zbo/Documents/知识图谱/dist/ZBO Graph-0.1.0-arm64-mac.zip
+
+说明：
+这个 zip 解压后里面是 ZBO Graph.app，可以直接发给别人使用。
+如果对方 macOS 提示“无法验证开发者”，让对方右键 APP，选择“打开”，再确认打开。
+
+
+五、GitHub 常用操作
+
+查看当前状态：
+
+git status
+
+添加修改：
+
+git add .
+
+提交修改：
+
+git commit -m "Update ZBO Graph"
+
+推送到 GitHub：
+
+git push
+
+查看远程地址：
+
+git remote -v
+
+当前远程地址应为：
+
+origin  git@github.com:frogprince111/zbo_graph.git
+
+
+六、重要提醒
+
+1. dist/ 是安装包输出目录，已经被 .gitignore 忽略。
+2. 不要把安装包直接推到 GitHub 源码仓库。
+3. 安装包建议通过微信、网盘、飞书、邮件等方式单独发给别人。
+4. GitHub 仓库主要用于保存源码、README、配置文件和版本记录。
+
+
+七、项目主要文件
+
+index.html        页面结构
+styles.css        页面样式
+app.js            图谱逻辑、导入解析、导出功能
+main.js           Electron 桌面应用主进程
+preload.js        Electron 安全桥接脚本
+package.json      npm 和 Electron 配置
+README.md         GitHub 项目说明
+assets/           图标资源
+dist/             本地打包输出目录，不上传 GitHub
