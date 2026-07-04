@@ -93,7 +93,38 @@ git remote -v
 origin  git@github.com:frogprince111/zbo_graph.git
 
 
-六、重要提醒
+六、部署到 Render 固定网站
+
+Render 固定网站适合让别人通过浏览器访问，不需要安装桌面应用。
+
+项目根目录已经添加 render.yaml，可以用于 Render Static Site 部署。
+
+GitHub 仓库地址：
+https://github.com/frogprince111/zbo_graph
+
+Render 部署步骤：
+
+1. 打开 Render 控制台。
+2. 选择 New。
+3. 选择 Static Site 或 Blueprint。
+4. 连接 GitHub 仓库 frogprince111/zbo_graph。
+5. 如果选择 Static Site，填写：
+   Build Command：留空
+   Publish Directory：.
+6. 如果选择 Blueprint，Render 会读取 render.yaml。
+7. 点击 Deploy。
+
+部署成功后，Render 会给一个固定网址，类似：
+https://zbo-graph.onrender.com
+
+实际网址以 Render 控制台显示为准。
+
+说明：
+网站版可以在电脑、手机、平板浏览器访问。
+桌面专属能力，比如直接打开系统下载目录，会受浏览器限制。
+
+
+七、重要提醒
 
 1. dist/ 是安装包输出目录，已经被 .gitignore 忽略。
 2. 不要把安装包直接推到 GitHub 源码仓库。
@@ -101,7 +132,7 @@ origin  git@github.com:frogprince111/zbo_graph.git
 4. GitHub 仓库主要用于保存源码、README、配置文件和版本记录。
 
 
-七、项目主要文件
+八、项目主要文件
 
 index.html        页面结构
 styles.css        页面样式
@@ -110,5 +141,6 @@ main.js           Electron 桌面应用主进程
 preload.js        Electron 安全桥接脚本
 package.json      npm 和 Electron 配置
 README.md         GitHub 项目说明
+render.yaml       Render 静态网站部署配置
 assets/           图标资源
 dist/             本地打包输出目录，不上传 GitHub
