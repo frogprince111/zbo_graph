@@ -529,6 +529,7 @@ dd {
   overflow: auto;
   cursor: default;
   user-select: none;
+  touch-action: pan-x pan-y;
   background:
     linear-gradient(rgba(216, 223, 216, 0.42) 1px, transparent 1px),
     linear-gradient(90deg, rgba(216, 223, 216, 0.42) 1px, transparent 1px);
@@ -561,6 +562,7 @@ svg {
 
 .node {
   cursor: pointer;
+  touch-action: none;
 }
 
 .node circle {
@@ -792,5 +794,170 @@ svg {
   .toolbar-actions input {
     flex: 1 1 100%;
     width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  body {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .app-shell,
+  .app-shell.sidebar-collapsed {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    height: 100dvh;
+    min-height: 0;
+  }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 18;
+    width: min(88vw, 390px);
+    max-width: calc(100vw - 36px);
+    border-right: 1px solid var(--line);
+    border-bottom: 0;
+    box-shadow: 18px 0 42px rgba(23, 33, 27, 0.18);
+    transform: translateX(0);
+    transition: transform 0.22s ease;
+  }
+
+  .app-shell.sidebar-collapsed .sidebar {
+    padding: 22px;
+    overflow: auto;
+    transform: translateX(-100%);
+  }
+
+  .app-shell.sidebar-collapsed .sidebar > * {
+    display: block;
+  }
+
+  .splitter,
+  .app-shell.sidebar-collapsed .splitter {
+    position: fixed;
+    top: 50%;
+    left: min(88vw, 390px);
+    z-index: 22;
+    display: block;
+    width: 0;
+    height: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .app-shell.sidebar-collapsed .splitter {
+    left: 10px;
+  }
+
+  .splitter::after {
+    display: none;
+  }
+
+  .splitter-toggle,
+  .app-shell.sidebar-collapsed .splitter-toggle {
+    position: fixed;
+    top: 50%;
+    left: min(88vw, 390px);
+    width: 22px;
+    height: 42px;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+  }
+
+  .app-shell.sidebar-collapsed .splitter-toggle {
+    left: 10px;
+    transform: translateY(-50%);
+  }
+
+  .workspace {
+    min-height: 0;
+    height: 100dvh;
+  }
+
+  .toolbar {
+    min-height: auto;
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .toolbar h2 {
+    max-width: calc(100vw - 28px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .toolbar-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) repeat(3, 42px);
+    gap: 8px;
+  }
+
+  .toolbar-actions input {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  #layoutMode {
+    grid-column: 2;
+  }
+
+  #backGraph {
+    grid-column: 3;
+  }
+
+  #closeGraph {
+    grid-column: 4;
+  }
+
+  .round-tool-button {
+    width: 42px;
+    height: 42px;
+  }
+
+  .graph-viewport {
+    min-height: calc(100dvh - 132px);
+    height: calc(100dvh - 132px);
+    overscroll-behavior: contain;
+  }
+
+  .brand {
+    grid-template-columns: 62px minmax(0, 1fr);
+    min-height: 62px;
+    column-gap: 12px;
+  }
+
+  .mark {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 12cqw, 46px);
+  }
+
+  textarea {
+    min-height: 180px;
+  }
+
+  .panel {
+    border-radius: 14px;
+    padding: 14px;
+  }
+
+  .catalog-list {
+    max-height: 34vh;
+    overflow: auto;
+  }
+
+  .note-dialog {
+    width: min(94vw, 480px);
+  }
+
+  .dialog-actions {
+    flex-wrap: wrap;
   }
 }

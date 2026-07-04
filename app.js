@@ -120,6 +120,8 @@ const state = {
   draggingNode: null,
   suppressNodeClick: false,
   nodeClickTimer: null,
+  longPressTimer: null,
+  pinchZoom: null,
   resizingSidebar: false,
   sidebarTogglePress: null,
   suppressSidebarToggleClick: false,
@@ -198,6 +200,10 @@ if (savedSidebarWidth) {
 
 if (localStorage.getItem("kg-sidebar-collapsed") === "true") {
   setSidebarCollapsed(true);
+}
+
+if (window.matchMedia("(max-width: 760px)").matches) {
+  setSidebarCollapsed(true, false);
 }
 
 updateLayoutButton();
@@ -1165,7 +1171,10 @@ function render() {
       tabindex: "0",
       "data-node-id": row.node.id,
     });
-    group.addEventListener("mousedown", (event) => startNodeDrag(event, row.node));
+    group.addEventListener("pointerdown", (event) => {
+      group.setPointerCapture?.(event.pointerId);
+      startNodeDrag(event, row.node);
+    });
     group.addEventListener("click", (event) => {
       if (state.suppressNodeClick) {
         state.suppressNodeClick = false;
@@ -1521,7 +1530,7 @@ function clampStaticNode(node) {
 }
 
 function startNodeDrag(event, node) {
-  if (event.button !== 0) return;
+  if (event.button !== 0 && event.pointerType !== "touch") return;
   const current = state.layoutMode === "network"
     ? state.networkPhysics.get(node.id)
     : state.renderPositions.get(node.id);
@@ -1537,7 +1546,17 @@ function startNodeDrag(event, node) {
     offsetY: current.y - point.y,
     moved: false,
     beforeSnapshot: graphSnapshot(),
+    node,
   };
+  if (event.pointerType && event.pointerType !== "mouse") {
+    clearTimeout(state.longPressTimer);
+    state.longPressTimer = setTimeout(() => {
+      if (!state.draggingNode || state.draggingNode.id !== node.id || state.draggingNode.moved) return;
+      state.suppressNodeClick = true;
+      state.draggingNode = null;
+      openNoteEditor(node);
+    }, 650);
+  }
 }
 
 function dragNode(event) {
@@ -1553,6 +1572,8 @@ function dragNode(event) {
   current.x = point.x + state.draggingNode.offsetX;
   current.y = point.y + state.draggingNode.offsetY;
   state.draggingNode.moved = true;
+  clearTimeout(state.longPressTimer);
+  state.longPressTimer = null;
   if (isNetworkDrag) {
     current.vx = 0;
     current.vy = 0;
@@ -1568,6 +1589,8 @@ function dragNode(event) {
 
 function stopNodeDrag() {
   if (!state.draggingNode) return;
+  clearTimeout(state.longPressTimer);
+  state.longPressTimer = null;
   if (state.draggingNode.moved) {
     pushUndoSnapshot(state.draggingNode.beforeSnapshot);
   }
@@ -2496,12 +2519,12 @@ els.sidebarToggle.addEventListener("click", (event) => {
   state.sidebarTogglePress = null;
 });
 
-function setSidebarCollapsed(collapsed) {
+function setSidebarCollapsed(collapsed, persist = true) {
   state.resizingSidebar = false;
   state.sidebarTogglePress = null;
   els.shell.classList.toggle("sidebar-collapsed", collapsed);
   els.shell.classList.remove("resizing");
-  localStorage.setItem("kg-sidebar-collapsed", String(collapsed));
+  if (persist) localStorage.setItem("kg-sidebar-collapsed", String(collapsed));
   els.sidebarToggle.textContent = collapsed ? "›" : "‹";
   els.sidebarToggle.setAttribute("aria-label", collapsed ? "展开左侧栏" : "收起左侧栏");
   els.sidebarToggle.setAttribute("title", collapsed ? "展开左侧栏" : "收起左侧栏");
@@ -2516,10 +2539,6 @@ els.splitter.addEventListener("mousedown", (event) => {
 });
 
 window.addEventListener("mousemove", (event) => {
-  if (state.draggingNode) {
-    dragNode(event);
-    return;
-  }
   if (!state.resizingSidebar) return;
   if (state.sidebarTogglePress && Math.abs(event.clientX - state.sidebarTogglePress.x) > 3) {
     state.sidebarTogglePress.moved = true;
@@ -2532,6 +2551,11 @@ window.addEventListener("mousemove", (event) => {
   const width = clamp(event.clientX, 280, Math.min(680, window.innerWidth - 420));
   setSidebarWidth(width);
   render();
+});
+
+window.addEventListener("pointermove", (event) => {
+  if (!state.draggingNode) return;
+  dragNode(event);
 });
 
 function stopSidebarResize() {
@@ -2578,6 +2602,8 @@ function stopPanning() {
 window.addEventListener("mouseup", stopPanning);
 window.addEventListener("mouseup", stopSidebarResize);
 window.addEventListener("mouseup", stopNodeDrag);
+window.addEventListener("pointerup", stopNodeDrag);
+window.addEventListener("pointercancel", stopNodeDrag);
 window.addEventListener("blur", stopPanning);
 window.addEventListener("blur", stopSidebarResize);
 window.addEventListener("blur", stopNodeDrag);
@@ -2607,6 +2633,53 @@ els.viewport.addEventListener(
   },
   { passive: false },
 );
+
+els.viewport.addEventListener(
+  "touchstart",
+  (event) => {
+    if (event.touches.length !== 2 || !state.root) return;
+    const rect = els.viewport.getBoundingClientRect();
+    const first = event.touches[0];
+    const second = event.touches[1];
+    const centerX = (first.clientX + second.clientX) / 2 - rect.left;
+    const centerY = (first.clientY + second.clientY) / 2 - rect.top;
+    state.pinchZoom = {
+      distance: Math.hypot(second.clientX - first.clientX, second.clientY - first.clientY),
+      zoom: state.zoom,
+      centerX,
+      centerY,
+      contentX: (els.viewport.scrollLeft + centerX) / state.zoom,
+      contentY: (els.viewport.scrollTop + centerY) / state.zoom,
+    };
+  },
+  { passive: true },
+);
+
+els.viewport.addEventListener(
+  "touchmove",
+  (event) => {
+    if (!state.pinchZoom || event.touches.length !== 2 || !state.root) return;
+    event.preventDefault();
+    const first = event.touches[0];
+    const second = event.touches[1];
+    const distance = Math.hypot(second.clientX - first.clientX, second.clientY - first.clientY);
+    const nextZoom = clamp(state.pinchZoom.zoom * (distance / state.pinchZoom.distance), 0.5, 2.5);
+    if (Math.abs(nextZoom - state.zoom) < 0.02) return;
+    state.zoom = nextZoom;
+    render();
+    els.viewport.scrollLeft = state.pinchZoom.contentX * nextZoom - state.pinchZoom.centerX;
+    els.viewport.scrollTop = state.pinchZoom.contentY * nextZoom - state.pinchZoom.centerY;
+  },
+  { passive: false },
+);
+
+els.viewport.addEventListener("touchend", () => {
+  state.pinchZoom = null;
+});
+
+els.viewport.addEventListener("touchcancel", () => {
+  state.pinchZoom = null;
+});
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, Math.round(value * 100) / 100));
