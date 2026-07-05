@@ -1,99 +1,4 @@
-const demoTree = `llm_customer_service_B_wiki/
-├── atguigu_ai/                    # 核心框架
-│   ├── __init__.py
-│   ├── __main__.py                # CLI入口
-│   ├── agent/                     # Agent模块
-│   │   ├── agent.py               # Agent主类
-│   │   ├── actions.py             # 动作系统
-│   │   ├── message_processor.py   # 消息处理器
-│   │   └── graph/                 # LangGraph编排
-│   │       ├── builder.py         # 图构建器
-│   │       ├── state.py           # 状态定义
-│   │       ├── edges.py           # 条件边
-│   │       └── nodes/             # 节点实现
-│   │           ├── understand.py  # 理解节点
-│   │           ├── policy.py      # 策略节点
-│   │           ├── action.py      # 动作节点
-│   │           ├── guard.py       # 保护节点
-│   │           └── response.py    # 响应节点
-│   ├── core/                      # 核心模块
-│   │   ├── tracker.py             # 对话状态追踪器
-│   │   ├── domain.py              # 领域定义
-│   │   ├── slots.py               # 槽位系统
-│   │   └── stores/                # 存储实现
-│   │       ├── tracker_store.py   # 存储接口
-│   │       ├── json_store.py      # JSON存储
-│   │       └── mysql_store.py     # MySQL存储
-│   ├── dialogue_understanding/    # 对话理解模块
-│   │   ├── commands/              # 命令系统
-│   │   │   ├── base.py            # 命令基类
-│   │   │   ├── flow_commands.py   # Flow命令
-│   │   │   ├── slot_commands.py   # 槽位命令
-│   │   │   ├── answer_commands.py # 回答命令
-│   │   │   └── session_commands.py# 会话命令
-│   │   ├── generator/             # 命令生成
-│   │   │   ├── llm_generator.py   # LLM生成器
-│   │   │   ├── prompt_builder.py  # Prompt构建
-│   │   │   └── command_parser.py  # 命令解析
-│   │   ├── processor/             # 命令处理
-│   │   │   └── command_processor.py
-│   │   ├── stack/                 # 对话栈
-│   │   │   ├── dialogue_stack.py  # 栈实现
-│   │   │   └── stack_frame.py     # 栈帧定义
-│   │   └── flow/                  # Flow系统
-│   │       ├── flow.py            # Flow定义
-│   │       ├── flow_loader.py     # Flow加载
-│   │       └── flow_executor.py   # Flow执行
-│   ├── policies/                  # 策略模块
-│   │   ├── base_policy.py         # 策略基类
-│   │   ├── flow_policy.py         # Flow策略
-│   │   ├── enterprise_search_policy.py  # 搜索策略
-│   │   └── policy_ensemble.py     # 策略集成
-│   ├── nlg/                       # 自然语言生成
-│   │   ├── nlg_generator.py       # NLG基类
-│   │   ├── template_nlg.py        # 模板NLG
-│   │   └── response_rephraser.py  # 响应重述
-│   ├── channels/                  # 通道模块
-│   │   ├── base_channel.py        # 通道基类
-│   │   ├── rest_channel.py        # REST通道
-│   │   ├── socketio_channel.py    # WebSocket通道
-│   │   └── console_channel.py     # 控制台通道
-│   ├── retrieval/                 # 检索模块
-│   │   ├── base_retriever.py      # 检索器基类
-│   │   ├── embedder.py            # 向量嵌入
-│   │   └── flow_retriever.py      # Flow检索
-│   ├── api/                       # API模块
-│   │   └── server.py              # FastAPI服务
-│   ├── cli/                       # 命令行工具
-│   │   ├── __init__.py            # CLI入口
-│   │   ├── init.py                # 初始化命令
-│   │   ├── run.py                 # 运行命令
-│   │   ├── train.py               # 训练命令
-│   │   ├── shell.py               # 交互Shell
-│   │   └── inspect.py             # 调试命令
-│   ├── training/                  # 训练模块
-│   │   ├── trainer.py             # 训练器
-│   │   ├── model_storage.py       # 模型存储
-│   │   └── finetune/              # 微调
-│   └── shared/                    # 共享工具
-│       ├── config.py              # 配置管理
-│       ├── constants.py           # 常量定义
-│       ├── exceptions.py          # 异常定义
-│       ├── yaml_loader.py         # YAML加载
-│       └── llm/                   # LLM客户端
-│           ├── base_client.py     # 客户端基类
-│           └── langchain_client.py# LangChain客户端
-├── ecs_demo/                      # 电商客服示例
-│   ├── config.yml                 # 配置文件
-│   ├── endpoints.yml              # 端点配置
-│   ├── data/
-│   │   └── flows/                 # Flow定义
-│   ├── actions/                   # 自定义Action
-│   └── addons/                    # 扩展功能
-├── docs/                          # 文档目录
-├── reference/                     # 参考资料
-├── setup.py                       # 安装配置
-└── requirements-atguigu.txt       # 依赖列表`;
+const demoTree = "# 家常菜\n\n## 川菜\n### 麻婆豆腐\n#### 食材\n##### 主料\n- 豆腐\n- 牛肉末\n\n##### 调料\n- 郫县豆瓣酱\n- 花椒\n- 辣椒面\n- 生抽\n\n#### 做法\n##### 前期处理\n- 豆腐焯水\n- 牛肉切末\n\n##### 烹饪步骤\n- 炒牛肉\n- 加入调料\n- 放入豆腐炖煮\n\n#### 推荐搭配\n##### 主食\n- 米饭\n\n##### 饮品\n- 酸梅汤\n\n### 回锅肉\n#### 食材\n##### 主料\n- 五花肉\n- 蒜苗\n\n##### 调料\n- 豆瓣酱\n- 豆豉\n\n#### 做法\n##### 准备\n- 五花肉煮熟切片\n\n##### 烹饪\n- 爆香调料\n- 翻炒五花肉\n- 放入蒜苗\n\n---\n\n## 湘菜\n### 剁椒鱼头\n#### 食材\n##### 主料\n- 鱼头\n\n##### 调料\n- 剁椒\n- 姜\n- 蒜\n\n#### 做法\n##### 前期处理\n- 鱼头清洗\n- 腌制\n\n##### 烹饪\n- 铺剁椒\n- 蒸制15分钟\n\n### 小炒黄牛肉\n#### 食材\n##### 主料\n- 黄牛肉\n\n##### 配菜\n- 小米椒\n- 香菜\n\n#### 做法\n##### 腌制\n- 生抽\n- 淀粉\n\n##### 爆炒\n- 大火快炒\n- 放入香菜\n\n---\n\n## 徽菜\n### 臭鳜鱼\n#### 食材\n##### 主料\n- 鳜鱼\n\n##### 调料\n- 生姜\n- 青红椒\n\n#### 做法\n##### 发酵\n- 腌制发酵\n\n##### 烹饪\n- 煎制\n- 炖煮\n\n### 毛豆腐\n#### 食材\n##### 主料\n- 毛豆腐\n\n##### 调料\n- 辣椒酱\n- 葱花\n\n#### 做法\n##### 煎制\n- 小火慢煎\n\n##### 调味\n- 刷酱\n- 撒葱花\n\n---\n\n## 粤菜\n### 白切鸡\n#### 食材\n##### 主料\n- 三黄鸡\n\n##### 蘸料\n- 姜蓉\n- 酱油\n\n#### 做法\n##### 煮制\n- 小火浸熟\n\n##### 装盘\n- 切块\n- 配蘸料\n\n### 烧鹅\n#### 食材\n##### 主料\n- 鹅\n\n##### 调料\n- 五香粉\n- 蜂蜜\n\n#### 做法\n##### 腌制\n- 腌制12小时\n\n##### 烤制\n- 挂炉烤制";
 
 const catalogKey = "kg-graph-catalog";
 const parserVersion = "20260703-document-content-root";
@@ -2687,9 +2592,9 @@ function clamp(value, min, max) {
 
 if (!state.catalog.length) {
   els.input.value = demoTree;
-  applyTree(parseTreeText(demoTree), {
-    title: "llm_customer_service_B_wiki",
-    source: "示例",
+  applyTree(parseMarkdownText(demoTree, "家常菜.md"), {
+    title: "家常菜",
+    source: "示例 Markdown",
     inputText: demoTree,
   });
 } else {
